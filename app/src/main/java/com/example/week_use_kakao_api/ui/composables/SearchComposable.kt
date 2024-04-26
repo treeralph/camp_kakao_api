@@ -1,6 +1,7 @@
 package com.example.week_use_kakao_api.ui.composables
 
 
+import android.widget.AdapterView.OnItemLongClickListener
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,7 @@ import com.example.week_use_kakao_api.viewmodel.MainViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.week_use_kakao_api.data.model.MemberResponse
+import com.example.week_use_kakao_api.viewmodel.MainViewModelFactory
 
 @Composable
 fun SearchComposable(
@@ -33,20 +35,24 @@ fun SearchComposable(
 ) {
     LazyColumn(modifier = modifier) {
         items(viewModel.documents) { document ->
-            ColumnItem(
+            SearchColumnItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(12.dp),
                 document = document
-            )
+            ) { checked ->
+                if(checked) viewModel.addBookmark(document)
+                else viewModel.removeBookmark(document)
+            }
         }
     }
 }
 
 @Composable
-fun ColumnItem(
-    document: MemberResponse,
+fun SearchColumnItem(
     modifier: Modifier = Modifier,
+    document: MemberResponse,
+    onToggleClickListener: (Boolean) -> Unit,
 ) {
     var checked by remember { mutableStateOf(false) }
 
@@ -71,6 +77,7 @@ fun ColumnItem(
             checked = checked,
             onCheckedChange = {
                 checked = !checked
+                onToggleClickListener(checked)
             }
         )
 

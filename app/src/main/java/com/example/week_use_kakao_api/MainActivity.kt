@@ -1,6 +1,7 @@
 package com.example.week_use_kakao_api
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -20,12 +21,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -36,15 +39,13 @@ import com.example.week_use_kakao_api.ui.composables.SearchComposable
 import com.example.week_use_kakao_api.ui.theme.Week_use_kakao_apiTheme
 import com.example.week_use_kakao_api.viewmodel.MainViewModel
 import com.example.week_use_kakao_api.viewmodel.MainViewModelFactory
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels { MainViewModelFactory() }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel.onSearch("kotlin")
 
         setContent {
             Week_use_kakao_apiTheme {
@@ -65,6 +66,7 @@ fun MainComposable(
     viewModel: MainViewModel
 ) {
     val navController = rememberNavController()
+
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController = navController)
@@ -82,9 +84,10 @@ fun MainComposable(
 @Composable
 fun BottomNavigationBar(navController: NavController) {
 
-    var items = listOf("Search", "Bookmark")
-    var icons = listOf(Icons.Filled.Search, Icons.Filled.Bookmark)
-    var selectedItem by remember { mutableStateOf(0) }
+    val items = listOf("Search", "Bookmark")
+    val icons = listOf(Icons.Filled.Search, Icons.Filled.Bookmark)
+
+    var selectedItem by remember { mutableIntStateOf(0) }
     var currentRoute by remember { mutableStateOf(items[0]) }
 
     items.forEachIndexed { index, navigationItem ->
@@ -131,7 +134,10 @@ fun Navigation(
             )
         }
         composable("Bookmark") {
-            BookmarkComposable(modifier = Modifier.fillMaxSize())
+            BookmarkComposable(
+                modifier = Modifier.fillMaxSize(),
+                viewModel = viewModel
+            )
         }
     }
 }
