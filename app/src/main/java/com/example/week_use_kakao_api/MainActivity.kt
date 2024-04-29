@@ -36,6 +36,7 @@ import com.example.week_use_kakao_api.ui.composables.SearchComposable
 import com.example.week_use_kakao_api.ui.theme.Week_use_kakao_apiTheme
 import com.example.week_use_kakao_api.viewmodel.MainViewModel
 import com.example.week_use_kakao_api.viewmodel.MainViewModelFactory
+import kotlin.concurrent.thread
 
 class MainActivity : ComponentActivity() {
 
@@ -44,7 +45,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.onSearch("kotlin")
+        thread(start = true) {
+            viewModel.onSearch("kotlin")
+        }
 
         setContent {
             Week_use_kakao_apiTheme {
@@ -82,8 +85,8 @@ fun MainComposable(
 @Composable
 fun BottomNavigationBar(navController: NavController) {
 
-    var items = listOf("Search", "Bookmark")
-    var icons = listOf(Icons.Filled.Search, Icons.Filled.Bookmark)
+    val items = listOf("Search", "Bookmark")
+    val icons = listOf(Icons.Filled.Search, Icons.Filled.Bookmark)
     var selectedItem by remember { mutableStateOf(0) }
     var currentRoute by remember { mutableStateOf(items[0]) }
 
@@ -131,7 +134,10 @@ fun Navigation(
             )
         }
         composable("Bookmark") {
-            BookmarkComposable(modifier = Modifier.fillMaxSize())
+            BookmarkComposable(
+                modifier = Modifier.fillMaxSize(),
+                viewModel = viewModel
+            )
         }
     }
 }

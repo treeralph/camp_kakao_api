@@ -17,7 +17,21 @@ data class MemberResponse(
     @SerializedName("thumbnail_url") val thumbnail_url: String,
     @SerializedName("height") val height: Int,
     @SerializedName("width") val width: Int,
-)
+) {
+    fun toUIState(): MemberResponseUIState {
+        return MemberResponseUIState(
+            collection = collection,
+            datetime = datetime,
+            display_sitename = display_sitename,
+            doc_url = doc_url,
+            image_url = image_url,
+            thumbnail_url = thumbnail_url,
+            height = height,
+            width = width,
+            bookmarked = false
+        )
+    }
+}
 
 data class Meta(
     @SerializedName("is_end") val is_end: Boolean,
